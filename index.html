@@ -1410,7 +1410,18 @@
     // ========== Supabase 配置 ==========
     const SUPABASE_URL = 'https://eqetphivynokwhsfzzqs.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_wbuHZKTMjP1DI0g8B43TQA_dqZzRCml';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    // 检查是否已经创建了 supabase 客户端，避免重复声明
+    let supabase;
+    if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+      // 使用已加载的 Supabase SDK 创建客户端
+      if (typeof supabase === 'undefined') {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    } else {
+      console.error('❌ Supabase SDK 未正确加载');
+      alert('Supabase SDK 加载失败，请刷新页面重试');
+    }
 
     // ========== 认证状态 ==========
     let currentUser = null;
