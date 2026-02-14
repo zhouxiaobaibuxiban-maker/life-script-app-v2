@@ -1392,6 +1392,21 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
+    // ========== 全局错误处理 ==========
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.error('JavaScript Error:', message);
+      console.error('Source:', source);
+      console.error('Line:', lineno);
+      console.error('Column:', colno);
+      console.error('Error object:', error);
+      
+      // 在页面上显示错误
+      const errorDiv = document.createElement('div');
+      errorDiv.style.cssText = 'position:fixed; top:10px; left:10px; right:10px; background:#fee; color:#c33; padding:15px; border-radius:8px; font-size:14px; z-index:99999;';
+      errorDiv.innerHTML = `<strong>错误：</strong>${message}<br><small>行：${lineno}，列：${colno}</small>`;
+      document.body.appendChild(errorDiv);
+    };
+
     // ========== Supabase 配置 ==========
     const SUPABASE_URL = 'https://eqetphivynokwhsfzzqs.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_wbuHZKTMjP1DI0g8B43TQA_dqZzRCml';
@@ -1495,9 +1510,15 @@
     async function handleAuthSubmit(e) {
       e.preventDefault();
       
+      console.log('✅ handleAuthSubmit 被调用了');
+      
       const email = document.getElementById('authEmail').value;
       const password = document.getElementById('authPassword').value;
       const submitBtn = document.getElementById('authSubmitBtn');
+      
+      console.log('📧 邮箱:', email);
+      console.log('🔑 密码:', password ? '已输入' : '未输入');
+      console.log('📝 模式:', isLoginMode ? '登录' : '注册');
       
       submitBtn.disabled = true;
       submitBtn.textContent = '处理中...';
@@ -2011,9 +2032,28 @@
 
     // ========== 初始化 ==========
     document.addEventListener('DOMContentLoaded', () => {
+      console.log('✅ DOMContentLoaded 已触发');
+      
       // 绑定认证表单
-      document.getElementById('authForm').addEventListener('submit', handleAuthSubmit);
-      document.getElementById('authToggleBtn').addEventListener('click', toggleAuthMode);
+      const authForm = document.getElementById('authForm');
+      const authToggleBtn = document.getElementById('authToggleBtn');
+      
+      console.log('📝 authForm 元素:', authForm);
+      console.log('📝 authToggleBtn 元素:', authToggleBtn);
+      
+      if (authForm) {
+        authForm.addEventListener('submit', handleAuthSubmit);
+        console.log('✅ authForm submit 事件已绑定');
+      } else {
+        console.error('❌ 找不到 authForm 元素');
+      }
+      
+      if (authToggleBtn) {
+        authToggleBtn.addEventListener('click', toggleAuthMode);
+        console.log('✅ authToggleBtn click 事件已绑定');
+      } else {
+        console.error('❌ 找不到 authToggleBtn 元素');
+      }
       
       // 绑定复盘笔记保存
       ['highlight', 'NG', 'thinking'].forEach(key => {
@@ -2031,6 +2071,7 @@
       document.getElementById('apiProvider').value = appState.apiProvider || 'deepseek';
 
       // 检查认证状态
+      console.log('🔍 检查认证状态...');
       checkAuth();
     });
 
